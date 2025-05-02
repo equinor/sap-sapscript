@@ -7,6 +7,10 @@ CLASS zcl_sapscript_text DEFINITION
   PUBLIC SECTION.
     INTERFACES zif_sapscript_text.
 
+    "! <p class="shorttext synchronized">Constructor</p>
+    "!
+    "! @parameter text_header | <p class="shorttext synchronized">Text header</p>
+    "! @parameter text_lines  | <p class="shorttext synchronized">Content as text lines</p>
     METHODS constructor
       IMPORTING text_header TYPE thead
                 text_lines  TYPE zif_sapscript_text=>ty_text_lines OPTIONAL.
@@ -139,11 +143,12 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_sapscript_text~save.
-    DATA text_is_new       TYPE c LENGTH 1           VALUE ' '.
-    DATA savemode_direct   TYPE c LENGTH 1           VALUE ' '.
-    DATA keep_last_changed TYPE c LENGTH 1           VALUE ' '.
-    DATA save_function     TYPE ty_processing_status.
-    DATA new_header        TYPE thead.
+    DATA text_is_new        TYPE c LENGTH 1                        VALUE ' '.
+    DATA savemode_direct    TYPE c LENGTH 1                        VALUE ' '.
+    DATA keep_last_changed  TYPE c LENGTH 1                        VALUE ' '.
+    DATA save_function      TYPE ty_processing_status.
+    DATA text_as_text_lines TYPE zif_sapscript_text=>ty_text_lines.
+    DATA new_header         TYPE thead.
 
     IF text_header-mandt IS INITIAL.
       text_is_new = 'X'.
@@ -160,6 +165,7 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
     ELSE.
       check_authorization( text_activity-change ).
     ENDIF.
+    text_as_text_lines = zif_sapscript_text~get_text( ).
     CALL FUNCTION 'SAVE_TEXT'
       EXPORTING  header            = text_header
                  insert            = text_is_new
@@ -168,7 +174,7 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
                  keep_last_changed = keep_last_changed
       IMPORTING  function          = save_function
                  newheader         = new_header
-      TABLES     lines             = text_lines
+      TABLES     lines             = text_as_text_lines
       EXCEPTIONS id                = 1
                  language          = 2
                  name              = 3
@@ -240,21 +246,8 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
     DATA text_lines     LIKE result.
     DATA current_offset TYPE i.
     DATA newlines       TYPE i.
-    DATA text_object    TYPE ttxob.
 
     CHECK text_as_string IS NOT INITIAL.
-
-    CALL FUNCTION 'CHECK_TEXT_OBJECT'
-      EXPORTING  object      = text_header-tdobject
-      IMPORTING  object_info = text_object
-      EXCEPTIONS object      = 1
-                 OTHERS      = 2.
-    IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE zcx_sapscript_text
-
-            MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
-    ENDIF.
 
     FIND ALL OCCURRENCES OF cl_abap_char_utilities=>newline IN text_as_string RESULTS DATA(line_feeds).
     current_offset = 0.
@@ -266,7 +259,7 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
                                                                off = current_offset
                                                                len = line_feed-offset - current_offset )
                          newlines                 = newlines
-                         characters_per_text_line = text_object-tdlinesize ).
+                         characters_per_text_line = text_header-tdlinesize ).
         IF current_offset = 0 AND text_lines IS NOT INITIAL.
           text_lines[ 1 ]-tdformat = '* '.
         ENDIF.
@@ -281,7 +274,7 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
     text_lines = text_section_to_text_lines( text_section             = substring( val = text_as_string
                                                                                    off = current_offset )
                                              newlines                 = newlines
-                                             characters_per_text_line = text_object-tdlinesize ).
+                                             characters_per_text_line = text_header-tdlinesize ).
     IF current_offset = 0 AND text_lines IS NOT INITIAL.
       text_lines[ 1 ]-tdformat = '* '.
     ENDIF.
@@ -289,46 +282,29 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD text_lines_as_string.
-    DATA text_object TYPE ttxob.
+    DATA text_line TYPE tline.
 
     CHECK text_lines IS NOT INITIAL.
 
-    IF text_header-tdlinesize IS INITIAL.
-      CALL FUNCTION 'CHECK_TEXT_OBJECT'
-        EXPORTING  object      = text_header-tdobject
-        IMPORTING  object_info = text_object
-        EXCEPTIONS object      = 1
-                   OTHERS      = 2.
-      IF sy-subrc <> 0.
-        RAISE EXCEPTION TYPE zcx_sapscript_text
-
-              MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
-      ENDIF.
-      text_header-tdlinesize = text_object-tdlinesize.
-    ENDIF.
-
-    READ TABLE text_lines INTO DATA(previous_text_line) INDEX 1.
-    LOOP AT text_lines INTO DATA(text_line) FROM 2.
+    LOOP AT text_lines INTO text_line.
       CASE text_line-tdformat.
         WHEN '*'.
-          IF paragraph_to_double_newline = abap_true.
-            result = result && previous_text_line-tdline(text_header-tdlinesize) && cl_abap_char_utilities=>newline && cl_abap_char_utilities=>newline.
+          IF result IS INITIAL.
+            result = text_line-tdline.
           ELSE.
-            result = result && previous_text_line-tdline(text_header-tdlinesize) && cl_abap_char_utilities=>newline.
+            IF paragraph_to_double_newline = abap_true.
+              result = result && cl_abap_char_utilities=>newline.
+            ENDIF.
+            result = result && cl_abap_char_utilities=>newline && text_line-tdline.
           ENDIF.
         WHEN '/ '.
-          result = result && previous_text_line-tdline(text_header-tdlinesize) && cl_abap_char_utilities=>newline.
+          result = result && cl_abap_char_utilities=>newline && text_line-tdline.
         WHEN '= '.
-          CONCATENATE result previous_text_line-tdline(text_header-tdlinesize) INTO result RESPECTING BLANKS.
-        WHEN '  '.
-          CONCATENATE result previous_text_line-tdline(text_header-tdlinesize) INTO result SEPARATED BY space.
-        WHEN OTHERS. " Add a line break just in case...
-          CONCATENATE result previous_text_line-tdline(text_header-tdlinesize) INTO result SEPARATED BY space.
+          CONCATENATE result text_line-tdline INTO result.
+        WHEN OTHERS.
+          CONCATENATE result text_line-tdline INTO result SEPARATED BY space.
       ENDCASE.
-      previous_text_line = text_line.
     ENDLOOP.
-    result = result && previous_text_line-tdline.
   ENDMETHOD.
 
   METHOD text_section_to_text_lines.

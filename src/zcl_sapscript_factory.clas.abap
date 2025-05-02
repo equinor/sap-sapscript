@@ -5,6 +5,11 @@ CLASS zcl_sapscript_factory DEFINITION
   GLOBAL FRIENDS zth_sapscript_injector.
 
   PUBLIC SECTION.
+    "! <p class="shorttext synchronized">Create SAPscript Text factory for a text object</p>
+    "!
+    "! @parameter text_object        | <p class="shorttext synchronized">Text object</p>
+    "! @parameter result             | <p class="shorttext synchronized">SAPscript Text factory</p>
+    "! @raising   zcx_sapscript_text | <p class="shorttext synchronized">SAPscript Text error</p>
     CLASS-METHODS create_text_factory
       IMPORTING text_object   TYPE tdobject
       RETURNING VALUE(result) TYPE REF TO zif_sapscript_text_factory

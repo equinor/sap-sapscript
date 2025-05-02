@@ -32,7 +32,7 @@ INTERFACE zif_sapscript_text
   "! @parameter paragraph_to_double_newline | <p class="shorttext synchronized">Convert new paragraph to two consecutive newline characters</p>
   "! @parameter result                      | <p class="shorttext synchronized">Text as string</p>
   METHODS get_text_as_string
-    IMPORTING paragraph_to_double_newline TYPE abap_bool DEFAULT abap_false
+    IMPORTING paragraph_to_double_newline TYPE abap_bool DEFAULT abap_true
     RETURNING VALUE(result)               TYPE string.
 
   "! <p class="shorttext synchronized">Set title</p>
@@ -77,7 +77,7 @@ INTERFACE zif_sapscript_text
   "! @parameter result                      | <p class="shorttext synchronized">Self-reference for chained calls</p>
   METHODS set_text_from_string
     IMPORTING new_text_as_string          TYPE string
-              double_newline_to_paragraph TYPE abap_bool DEFAULT abap_false
+              double_newline_to_paragraph TYPE abap_bool DEFAULT abap_true
     RETURNING VALUE(result)               TYPE REF TO zif_sapscript_text.
 
   "! <p class="shorttext synchronized">Save text</p>

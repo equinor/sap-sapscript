@@ -85,11 +85,13 @@ CLASS ltc_text_lines_from_string IMPLEMENTATION.
 
     " when
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject = 'ABAP_UNIT'
-                                       tdid     = 'TEST'
-                                       tdname   = 'TLINES_FROM_STRING'
-                                       tdspras  = 'E' ).
-    cut->zif_sapscript_text~set_text_from_string( input_string ).
+      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
+                                       tdid       = 'TEST'
+                                       tdname     = 'TLINES_FROM_STRING'
+                                       tdspras    = 'E'
+                                       tdlinesize = '072' ).
+    cut->zif_sapscript_text~set_text_from_string( new_text_as_string          = input_string
+                                                  double_newline_to_paragraph = abap_false ).
 
     " then
     expected_text_line-tdformat = '* '.
@@ -113,11 +115,13 @@ CLASS ltc_text_lines_from_string IMPLEMENTATION.
 
     " when
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject = 'ABAP_UNIT'
-                                       tdid     = 'TEST'
-                                       tdname   = 'TLINES_FROM_STRING'
-                                       tdspras  = 'E' ).
-    cut->zif_sapscript_text~set_text_from_string( input_string ).
+      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
+                                       tdid       = 'TEST'
+                                       tdname     = 'TLINES_FROM_STRING'
+                                       tdspras    = 'E'
+                                       tdlinesize = '072' ).
+    cut->zif_sapscript_text~set_text_from_string( new_text_as_string          = input_string
+                                                  double_newline_to_paragraph = abap_false ).
 
     " then
     expected_text_line-tdformat = '* '.
@@ -147,11 +151,13 @@ CLASS ltc_text_lines_from_string IMPLEMENTATION.
 
     " when
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject = 'ABAP_UNIT'
-                                       tdid     = 'TEST'
-                                       tdname   = 'TLINES_FROM_STRING'
-                                       tdspras  = 'E' ).
-    cut->zif_sapscript_text~set_text_from_string( input_string ).
+      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
+                                       tdid       = 'TEST'
+                                       tdname     = 'TLINES_FROM_STRING'
+                                       tdspras    = 'E'
+                                       tdlinesize = '072' ).
+    cut->zif_sapscript_text~set_text_from_string( new_text_as_string          = input_string
+                                                  double_newline_to_paragraph = abap_false ).
 
     " then
     expected_text_line-tdformat = '* '.
@@ -181,11 +187,13 @@ CLASS ltc_text_lines_from_string IMPLEMENTATION.
 
     " when
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject = 'ABAP_UNIT'
-                                       tdid     = 'TEST'
-                                       tdname   = 'TLINES_FROM_STRING'
-                                       tdspras  = 'E' ).
-    cut->zif_sapscript_text~set_text_from_string( input_string ).
+      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
+                                       tdid       = 'TEST'
+                                       tdname     = 'TLINES_FROM_STRING'
+                                       tdspras    = 'E'
+                                       tdlinesize = '072' ).
+    cut->zif_sapscript_text~set_text_from_string( new_text_as_string          = input_string
+                                                  double_newline_to_paragraph = abap_false ).
 
     " then
     expected_text_line-tdformat = '* '.
@@ -258,16 +266,18 @@ CLASS ltc_string_from_text_lines IMPLEMENTATION.
 
     " when
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject = 'ABAP_UNIT'
-                                       tdid     = 'TEST'
-                                       tdname   = 'TLINES_FROM_STRING'
-                                       tdspras  = 'E' ).
+      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
+                                       tdid       = 'TEST'
+                                       tdname     = 'TLINES_FROM_STRING'
+                                       tdspras    = 'E'
+                                       tdlinesize = '072' ).
     cut->zif_sapscript_text~set_text( input_text_lines ).
 
     " then
     expected_string = |Short text|.
-    cl_Abap_Unit_Assert=>assert_Equals( exp = expected_string
-                                        act = cut->zif_sapscript_text~get_text_as_string( ) ).
+    cl_Abap_Unit_Assert=>assert_Equals(
+        exp = expected_string
+        act = cut->zif_sapscript_text~get_text_as_string( paragraph_to_double_newline = abap_false ) ).
   ENDMETHOD.
 
   METHOD single_long_line.
@@ -280,27 +290,29 @@ CLASS ltc_string_from_text_lines IMPLEMENTATION.
     input_text_line-tdformat = '* '.
     input_text_line-tdline   = |Long text that will not fit in a single long text line. The second line |.
     APPEND input_text_line TO input_text_lines.
-    input_text_line-tdformat = '= '.
+    input_text_line-tdformat = '  '.
     input_text_line-tdline   = |should be a continuation of the first line, not a new line. Let's see if|.
     APPEND input_text_line TO input_text_lines.
-    input_text_line-tdformat = '= '.
-    input_text_line-tdline   = | it works correctly.|.
+    input_text_line-tdformat = '  '.
+    input_text_line-tdline   = |it works correctly.|.
     APPEND input_text_line TO input_text_lines.
 
     " when
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject = 'ABAP_UNIT'
-                                       tdid     = 'TEST'
-                                       tdname   = 'TLINES_FROM_STRING'
-                                       tdspras  = 'E' ).
+      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
+                                       tdid       = 'TEST'
+                                       tdname     = 'TLINES_FROM_STRING'
+                                       tdspras    = 'E'
+                                       tdlinesize = '072' ).
     cut->zif_sapscript_text~set_text( input_text_lines ).
 
     " then
     expected_string = |Long text that will not fit in a single long text line.|
                    && | The second line should be a continuation of the first line, not a new line.|
                    && | Let's see if it works correctly.|.
-    cl_Abap_Unit_Assert=>assert_Equals( exp = expected_string
-                                        act = cut->zif_sapscript_text~get_text_as_string( ) ).
+    cl_Abap_Unit_Assert=>assert_Equals(
+        exp = expected_string
+        act = cut->zif_sapscript_text~get_text_as_string( paragraph_to_double_newline = abap_false ) ).
   ENDMETHOD.
 
   METHOD short_lines.
@@ -322,10 +334,11 @@ CLASS ltc_string_from_text_lines IMPLEMENTATION.
 
     " when
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject = 'ABAP_UNIT'
-                                       tdid     = 'TEST'
-                                       tdname   = 'TLINES_FROM_STRING'
-                                       tdspras  = 'E' ).
+      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
+                                       tdid       = 'TEST'
+                                       tdname     = 'TLINES_FROM_STRING'
+                                       tdspras    = 'E'
+                                       tdlinesize = '072' ).
     cut->zif_sapscript_text~set_text( input_text_lines ).
 
     " then
@@ -333,7 +346,7 @@ CLASS ltc_string_from_text_lines IMPLEMENTATION.
                    && |short{ cl_abap_char_utilities=>newline }|
                    && |lines|.
     cl_Abap_Unit_Assert=>assert_Equals( exp = expected_string
-                                        act = cut->zif_sapscript_text~get_text_as_string( ) ).
+                                        act = cut->zif_sapscript_text~get_text_as_string( paragraph_to_double_newline = abap_false ) ).
   ENDMETHOD.
 
   METHOD double_newlines.
@@ -361,18 +374,20 @@ CLASS ltc_string_from_text_lines IMPLEMENTATION.
 
     " when
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject = 'ABAP_UNIT'
-                                       tdid     = 'TEST'
-                                       tdname   = 'TLINES_FROM_STRING'
-                                       tdspras  = 'E' ).
+      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
+                                       tdid       = 'TEST'
+                                       tdname     = 'TLINES_FROM_STRING'
+                                       tdspras    = 'E'
+                                       tdlinesize = '072' ).
     cut->zif_sapscript_text~set_text( input_text_lines ).
 
     " then
     expected_string = |Three short lines{ cl_abap_char_utilities=>newline }{ cl_abap_char_utilities=>newline }|
                    && |separated by{ cl_abap_char_utilities=>newline }{ cl_abap_char_utilities=>newline }|
                    && |double newlines|.
-    cl_Abap_Unit_Assert=>assert_Equals( exp = expected_string
-                                        act = cut->zif_sapscript_text~get_text_as_string( ) ).
+    cl_Abap_Unit_Assert=>assert_Equals(
+        exp = expected_string
+        act = cut->zif_sapscript_text~get_text_as_string( paragraph_to_double_newline = abap_false ) ).
   ENDMETHOD.
 ENDCLASS.
 
@@ -424,10 +439,11 @@ CLASS ltc_double_newline_to_paragrph IMPLEMENTATION.
 
     " when
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject = 'ABAP_UNIT'
-                                       tdid     = 'TEST'
-                                       tdname   = 'TLINES_FROM_STRING'
-                                       tdspras  = 'E' ).
+      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
+                                       tdid       = 'TEST'
+                                       tdname     = 'TLINES_FROM_STRING'
+                                       tdspras    = 'E'
+                                       tdlinesize = '072' ).
     cut->zif_sapscript_text~set_text_from_string( new_text_as_string          = input_string
                                                   double_newline_to_paragraph = abap_true ).
 
@@ -461,18 +477,20 @@ CLASS ltc_double_newline_to_paragrph IMPLEMENTATION.
 
     " when
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject = 'ABAP_UNIT'
-                                       tdid     = 'TEST'
-                                       tdname   = 'TLINES_FROM_STRING'
-                                       tdspras  = 'E' ).
+      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
+                                       tdid       = 'TEST'
+                                       tdname     = 'TLINES_FROM_STRING'
+                                       tdspras    = 'E'
+                                       tdlinesize = '072' ).
     cut->zif_sapscript_text~set_text( input_text_lines ).
 
     " then
     expected_string = |Three|
                    && |{ cl_abap_char_utilities=>newline }{ cl_abap_char_utilities=>newline }short|
                    && |{ cl_abap_char_utilities=>newline }{ cl_abap_char_utilities=>newline }paragraphs|.
-    cl_Abap_Unit_Assert=>assert_Equals( exp = expected_string
-                                        act = cut->zif_sapscript_text~get_text_as_string( abap_true ) ).
+    cl_Abap_Unit_Assert=>assert_Equals(
+        exp = expected_string
+        act = cut->zif_sapscript_text~get_text_as_string( paragraph_to_double_newline = abap_true ) ).
   ENDMETHOD.
 
   METHOD blank_line_before_paragraph.
@@ -503,10 +521,11 @@ CLASS ltc_double_newline_to_paragrph IMPLEMENTATION.
 
     " when
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject = 'ABAP_UNIT'
-                                       tdid     = 'TEST'
-                                       tdname   = 'TLINES_FROM_STRING'
-                                       tdspras  = 'E' ).
+      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
+                                       tdid       = 'TEST'
+                                       tdname     = 'TLINES_FROM_STRING'
+                                       tdspras    = 'E'
+                                       tdlinesize = '072' ).
     cut->zif_sapscript_text~set_text( input_text_lines ).
 
     " then
@@ -515,7 +534,8 @@ CLASS ltc_double_newline_to_paragrph IMPLEMENTATION.
                    && |{ cl_abap_char_utilities=>newline }{ cl_abap_char_utilities=>newline }Another paragrahp with blank line at end.{ cl_abap_char_utilities=>newline }|
                    && |{ cl_abap_char_utilities=>newline }{ cl_abap_char_utilities=>newline }Followed by the final paragraph!|.
 
-    cl_Abap_Unit_Assert=>assert_Equals( exp = expected_string
-                                        act = cut->zif_sapscript_text~get_text_as_string( abap_true ) ).
+    cl_Abap_Unit_Assert=>assert_Equals(
+        exp = expected_string
+        act = cut->zif_sapscript_text~get_text_as_string( paragraph_to_double_newline = abap_true ) ).
   ENDMETHOD.
 ENDCLASS.
