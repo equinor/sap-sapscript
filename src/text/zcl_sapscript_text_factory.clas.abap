@@ -86,9 +86,4 @@ CLASS zcl_sapscript_text_factory IMPLEMENTATION.
     CREATE OBJECT result TYPE zcl_sapscript_text
       EXPORTING text_header = text_header.
   ENDMETHOD.
-
-  METHOD zif_sapscript_text_factory~create_from_text.
-BREAK-POINT.
-  ENDMETHOD.
-
 ENDCLASS.
