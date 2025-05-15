@@ -6,7 +6,6 @@ CLASS zcx_sapscript DEFINITION
 
   PUBLIC SECTION.
     INTERFACES if_t100_message.
-    INTERFACES if_t100_dyn_msg.
 
     "! <p class="shorttext synchronized">CONSTRUCTOR</p>
     METHODS constructor

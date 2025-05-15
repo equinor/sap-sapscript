@@ -179,11 +179,38 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
                  language          = 2
                  name              = 3
                  object            = 4.
-    IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE zcx_sapscript_text
-            MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
-    ENDIF.
+    CASE sy-subrc.
+      WHEN 0.
+        " Everything is OK - processing continues below
+      WHEN 1.
+        RAISE EXCEPTION TYPE zcx_sapscript_text
+          EXPORTING textid        = zcx_sapscript_text=>sap_text_id_not_found
+                    text_name     = text_header-tdname
+                    text_id       = text_header-tdid
+                    text_object   = text_header-tdobject
+                    language_code = text_header-tdspras.
+      WHEN 2.
+        RAISE EXCEPTION TYPE zcx_sapscript_text
+          EXPORTING textid        = zcx_sapscript_text=>sap_language_not_allowed
+                    text_name     = text_header-tdname
+                    text_id       = text_header-tdid
+                    text_object   = text_header-tdobject
+                    language_code = text_header-tdspras.
+      WHEN 3.
+        RAISE EXCEPTION TYPE zcx_sapscript_text
+          EXPORTING textid        = zcx_sapscript_text=>sap_text_name_invalid
+                    text_name     = text_header-tdname
+                    text_id       = text_header-tdid
+                    text_object   = text_header-tdobject
+                    language_code = text_header-tdspras.
+      WHEN 4.
+        RAISE EXCEPTION TYPE zcx_sapscript_text
+          EXPORTING textid        = zcx_sapscript_text=>sap_text_object_not_found
+                    text_name     = text_header-tdname
+                    text_id       = text_header-tdid
+                    text_object   = text_header-tdobject
+                    language_code = text_header-tdspras.
+    ENDCASE.
 
     CASE save_function.
       WHEN save_status-created
@@ -222,8 +249,11 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
       EXCEPTIONS not_found       = 1.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE zcx_sapscript_text
-            MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        EXPORTING textid        = zcx_sapscript_text=>sap_text_not_found
+                  text_name     = text_header-tdname
+                  text_id       = text_header-tdid
+                  text_object   = text_header-tdobject
+                  language_code = text_header-tdspras.
     ENDIF.
   ENDMETHOD.
 
@@ -237,8 +267,11 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
       EXCEPTIONS no_authority = 1.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE zcx_sapscript_text
-            MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        EXPORTING textid        = zcx_sapscript_text=>sap_not_authorized
+                  text_name     = text_header-tdname
+                  text_id       = text_header-tdid
+                  text_object   = text_header-tdobject
+                  language_code = text_header-tdspras.
     ENDIF.
   ENDMETHOD.
 
