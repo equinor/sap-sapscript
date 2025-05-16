@@ -276,6 +276,8 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD text_lines_from_string.
+    DATA line_feeds     TYPE match_result_tab.
+    DATA line_feed      LIKE LINE OF line_feeds.
     DATA text_lines     LIKE result.
     DATA current_offset TYPE i.
     DATA newlines       TYPE i.
@@ -283,9 +285,9 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
 
     CHECK text_as_string IS NOT INITIAL.
 
-    FIND ALL OCCURRENCES OF cl_abap_char_utilities=>newline IN text_as_string RESULTS DATA(line_feeds).
+    FIND ALL OCCURRENCES OF cl_abap_char_utilities=>newline IN text_as_string RESULTS line_feeds.
     current_offset = 0.
-    LOOP AT line_feeds INTO DATA(line_feed).
+    LOOP AT line_feeds INTO line_feed.
       newlines = newlines + 1.
       IF line_feed-offset > current_offset.
         text_lines = text_section_to_text_lines(
@@ -341,7 +343,9 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD text_section_to_text_lines.
-    DATA text_line TYPE tline.
+    DATA text_line      TYPE tline.
+    DATA section_length TYPE i.
+    DATA current_offset TYPE i.
 
     IF newlines = 1.
       text_line-tdformat = '/ '.
@@ -366,8 +370,8 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
     ENDIF.
     newlines = 0.
 
-    DATA(section_length) = strlen( text_section ).
-    DATA(current_offset) = 0.
+    section_length = strlen( text_section ).
+    current_offset = 0.
     WHILE section_length > characters_per_text_line.
       text_line-tdline = text_section+current_offset(characters_per_text_line).
       APPEND text_line TO result.
