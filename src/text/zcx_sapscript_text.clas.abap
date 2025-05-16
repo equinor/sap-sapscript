@@ -109,11 +109,11 @@ CLASS zcx_sapscript_text IMPLEMENTATION.
     me->language_code = language_code.
 
     IF me->language_code IS NOT INITIAL.
-      SELECT SINGLE FROM t002t
-        FIELDS sptxt
-        WHERE spras = @sy-langu
-          AND sprsl = @me->language_code
-        INTO @me->language.
+      SELECT SINGLE sptxt
+        INTO me->language
+        FROM t002t
+        WHERE spras = sy-langu
+          AND sprsl = me->language_code.
     ENDIF.
 
     CLEAR me->textid.

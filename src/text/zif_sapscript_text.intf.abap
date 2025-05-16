@@ -1,7 +1,7 @@
 "! <p class="shorttext synchronized">SAPscript Text</p>
 INTERFACE zif_sapscript_text
   PUBLIC.
-  TYPES ty_text_lines TYPE STANDARD TABLE OF tline WITH EMPTY KEY.
+  TYPES ty_text_lines TYPE STANDARD TABLE OF tline WITH DEFAULT KEY.
 
   "! <p class="shorttext synchronized">Get title</p>
   "!

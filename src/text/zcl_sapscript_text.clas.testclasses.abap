@@ -29,12 +29,15 @@ ENDCLASS.
 
 CLASS ltc_text_lines_from_string IMPLEMENTATION.
   METHOD setup.
+    DATA test_header TYPE thead.
+
+    test_header-tdobject   = 'ABAP_UNIT'.
+    test_header-tdid       = 'TEST'.
+    test_header-tdname     = 'TLINES_FROM_STRING'.
+    test_header-tdspras    = 'E'.
+    test_header-tdlinesize = '072'.
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
-                                       tdid       = 'TEST'
-                                       tdname     = 'TLINES_FROM_STRING'
-                                       tdspras    = 'E'
-                                       tdlinesize = '072' ).
+      EXPORTING text_header = test_header.
   ENDMETHOD.
 
   METHOD teardown.
@@ -175,12 +178,15 @@ ENDCLASS.
 
 CLASS ltc_string_from_text_lines IMPLEMENTATION.
   METHOD setup.
+    DATA test_header TYPE thead.
+
+    test_header-tdobject   = 'ABAP_UNIT'.
+    test_header-tdid       = 'TEST'.
+    test_header-tdname     = 'TLINES_FROM_STRING'.
+    test_header-tdspras    = 'E'.
+    test_header-tdlinesize = '072'.
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
-                                       tdid       = 'TEST'
-                                       tdname     = 'TLINES_FROM_STRING'
-                                       tdspras    = 'E'
-                                       tdlinesize = '072' ).
+      EXPORTING text_header = test_header.
   ENDMETHOD.
 
   METHOD teardown.
@@ -316,12 +322,15 @@ ENDCLASS.
 
 CLASS ltc_double_newline_to_paragrph IMPLEMENTATION.
   METHOD setup.
+    DATA test_header TYPE thead.
+
+    test_header-tdobject   = 'ABAP_UNIT'.
+    test_header-tdid       = 'TEST'.
+    test_header-tdname     = 'TLINES_FROM_STRING'.
+    test_header-tdspras    = 'E'.
+    test_header-tdlinesize = '072'.
     CREATE OBJECT cut
-      EXPORTING text_header = VALUE #( tdobject   = 'ABAP_UNIT'
-                                       tdid       = 'TEST'
-                                       tdname     = 'TLINES_FROM_STRING'
-                                       tdspras    = 'E'
-                                       tdlinesize = '072' ).
+      EXPORTING text_header = test_header.
   ENDMETHOD.
 
   METHOD teardown.

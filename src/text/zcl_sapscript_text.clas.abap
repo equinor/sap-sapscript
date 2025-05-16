@@ -279,6 +279,7 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
     DATA text_lines     LIKE result.
     DATA current_offset TYPE i.
     DATA newlines       TYPE i.
+    FIELD-SYMBOLS <tl> LIKE LINE OF text_lines.
 
     CHECK text_as_string IS NOT INITIAL.
 
@@ -293,9 +294,6 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
                                                                len = line_feed-offset - current_offset )
                          newlines                 = newlines
                          characters_per_text_line = text_header-tdlinesize ).
-        IF current_offset = 0 AND text_lines IS NOT INITIAL.
-          text_lines[ 1 ]-tdformat = '* '.
-        ENDIF.
         APPEND LINES OF text_lines TO result.
         newlines = 0.
       ENDIF.
@@ -308,10 +306,12 @@ CLASS zcl_sapscript_text IMPLEMENTATION.
                                                                                    off = current_offset )
                                              newlines                 = newlines
                                              characters_per_text_line = text_header-tdlinesize ).
-    IF current_offset = 0 AND text_lines IS NOT INITIAL.
-      text_lines[ 1 ]-tdformat = '* '.
-    ENDIF.
     APPEND LINES OF text_lines TO result.
+
+    READ TABLE result INDEX 1 ASSIGNING <tl>.
+    IF sy-subrc = 0.
+      <tl>-tdformat = '* '.
+    ENDIF.
   ENDMETHOD.
 
   METHOD text_lines_as_string.
